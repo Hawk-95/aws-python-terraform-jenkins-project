@@ -7,6 +7,6 @@ output "rds_endpoint" {
 }
 
 output "db_secret_arn" {
-  value = module.infra.db_secret_arn
+  value = module.infra.db_master_secret_arn
 }
 
