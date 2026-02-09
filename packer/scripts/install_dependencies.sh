@@ -11,7 +11,7 @@ python3 -m ensurepip --upgrade
 python3 -m pip install --upgrade pip
 
 # (Optional) If you want Nginx
-sudo yum install -y nginx
-sudo systemctl enable nginx
-sudo systemctl start nginx
+#sudo yum install -y nginx
+#sudo systemctl enable nginx
+#sudo systemctl start nginx
 
