@@ -7,6 +7,10 @@ packer {
   }
 }
 
+####################
+# VARIABLES
+####################
+
 variable "aws_region" {
   type    = string
   default = "ap-south-1"
@@ -27,9 +31,31 @@ variable "ssh_username" {
   default = "ec2-user"
 }
 
+variable "vpc_id" {
+  type    = string
+  default = "vpc-0c42c4bee3dd9fffd"
+}
+
+####################
+# SOURCE
+####################
+
 source "amazon-ebs" "book_api_ami" {
   region        = var.aws_region
   instance_type = var.instance_type
+
+  vpc_id = var.vpc_id
+
+  # ✅ THIS is how Packer fetches subnet dynamically
+  subnet_filter {
+    filters = {
+      vpc-id                  = var.vpc_id
+      map-public-ip-on-launch = "true"
+    }
+    most_free = true
+  }
+
+  associate_public_ip_address = true
 
   source_ami_filter {
     filters = {
@@ -51,6 +77,10 @@ source "amazon-ebs" "book_api_ami" {
   }
 }
 
+####################
+# BUILD
+####################
+
 build {
   name    = "book-api-build"
   sources = ["source.amazon-ebs.book_api_ami"]
@@ -59,7 +89,6 @@ build {
     script = "scripts/install_dependencies.sh"
   }
 
-  # ✅ Upload your local book-app folder into the EC2
   provisioner "file" {
     source      = "../book-app"
     destination = "/tmp/book-app"
@@ -83,4 +112,3 @@ build {
     ]
   }
 }
-
